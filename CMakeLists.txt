@@ -13,9 +13,9 @@ FetchContent_Declare(
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
-  
+
 add_subdirectory(fill_smem_from_surface)
 add_subdirectory(convolve_kernel)
-add_subdirectory(cuda_convolve)
+add_subdirectory(cuda_convolver)
 add_subdirectory(convolve_app)
 #add_subdirectory(tests)

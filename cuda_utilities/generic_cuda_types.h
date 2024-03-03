@@ -9,7 +9,7 @@ namespace CudaUtil
 	{
 		uint32_t x;
 		uint32_t y;
-	} ImgDim;
+	} Dim2;
 
 	// Config struct for passing thread indices to kernels and device functions
 	typedef struct
@@ -18,7 +18,7 @@ namespace CudaUtil
 		uint32_t ty_l;
 		uint32_t tx_g;		
 		uint32_t ty_g;
-		ImgDim imgDim;
+		Dim2 imgDim;
 	} KernelIndex;
 
     typedef struct
