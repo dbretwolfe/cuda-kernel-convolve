@@ -2,11 +2,11 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include <string>
 
 #include "cuda_convolver.cuh"
+#include "generic_cuda_types.h"
+#include "image.h"
 
 int main()
 {
@@ -17,18 +17,10 @@ int main()
     };
     CudaUtil::Dim2 kernelDim = { 3, 3 };
 
-    int width = 0;
-    int height = 0;
-    int channels = 0;
-    const char* filename = "../../../images/finn.png";
-    auto img = std::unique_ptr<uint8_t>(stbi_load(filename, &width, &height, &channels, 0));
-    if (!img) {
-        std::cout << stbi_failure_reason() << std::endl;
-    }
+    std::string filePath = "../../../images/finn.png";
+    auto image = std::make_shared<StbImage::Image>(filePath);
 
-    CudaUtil::Dim2 imgDim = { static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
-    size_t imgSize = width * height * 4;
-    CudaImgProc::CudaConvolver convolver(imgDim);
+    CudaImgProc::CudaConvolver convolver(image);
     //std::vector<uint32_t> outputImg = convolver.Convolve()
 
     return 0;
