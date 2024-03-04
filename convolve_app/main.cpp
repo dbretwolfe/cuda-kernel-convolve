@@ -20,6 +20,10 @@ int main()
     std::string filePath = "../../../images/finn.png";
     auto image = std::make_shared<StbImage::Image>(filePath);
 
+    StbImage::Image copyImage(*image);
+
+    copyImage.Write("../../../images/finn_copy.png", StbImage::Image::ImageType::JPG, 100);
+
     CudaImgProc::CudaConvolver convolver(image);
     //std::vector<uint32_t> outputImg = convolver.Convolve()
 
