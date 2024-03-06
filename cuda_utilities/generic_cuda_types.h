@@ -18,7 +18,6 @@ namespace CudaUtil
 		uint32_t ty_l;
 		uint32_t tx_g;		
 		uint32_t ty_g;
-		Dim2 imgDim;
 	} KernelIndex;
 
     typedef struct
@@ -26,5 +25,5 @@ namespace CudaUtil
 		uint32_t x;
 		uint32_t y;
         uint32_t z;
-	} KernelBlockSize;
+	} CudaBlockSize;
 }

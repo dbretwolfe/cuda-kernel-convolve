@@ -2,15 +2,22 @@
 *
 # Don't ignore this file
 !.gitignore
+
 # But descend into directories
 !*/
+
 # Ignore build folder
 *build/
+
 # Include C/C++ files
 !*.c
 !*.cpp
 !*.h
 !*.hpp
+
+# Include CUDA files
+!*.cu
+!*.cuh
 
 # Include CMAKE files
 !*.txt

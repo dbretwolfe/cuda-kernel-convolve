@@ -18,14 +18,10 @@ int main()
     CudaUtil::Dim2 kernelDim = { 3, 3 };
 
     std::string filePath = "../../../images/finn.png";
-    auto image = std::make_shared<StbImage::Image>(filePath);
+    auto inputImage = std::make_shared<StbImage::Image>(filePath);
 
-    StbImage::Image copyImage(*image);
-
-    copyImage.Write("../../../images/finn_copy.png", StbImage::Image::ImageType::JPG, 100);
-
-    CudaImgProc::CudaConvolver convolver(image);
-    //std::vector<uint32_t> outputImg = convolver.Convolve()
+    CudaImgProc::CudaConvolver convolver(inputImage);
+    auto outputImg = convolver.Convolve(gaussian3x3Kernel, kernelDim);
 
     return 0;
 }
