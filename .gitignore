@@ -22,3 +22,7 @@
 # Include CMAKE files
 !*.txt
 !*.cmake
+
+# Allow PNG and JPEG images
+!*.png
+!*.jpg
