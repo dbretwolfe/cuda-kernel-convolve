@@ -25,6 +25,7 @@ namespace CudaImgProc
         inline int IntDivUp(int a, int b) const { return ((a % b) != 0) ? (a / b + 1) : (a / b); }
 
         std::shared_ptr<StbImage::Image> _image;
+        float* _devKernel;
         cudaArray_t _devInputArray;
         cudaArray_t _devOutputArray;
         cudaSurfaceObject_t _devInputSurface;

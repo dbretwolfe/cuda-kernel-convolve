@@ -5,6 +5,10 @@ project(
   VERSION 1.0
   LANGUAGES CXX CUDA)
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  set(CMAKE_CUDA_FLAGS ${CMAKE_CUDA_FLAGS} "-g -G")  # enable cuda-gdb
+endif()
+
 include(FetchContent)
 FetchContent_Declare(
   googletest

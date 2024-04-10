@@ -28,6 +28,11 @@ namespace ConvolveKernels
         const uint32_t tx_g = IMAD(blockDim.x, blockIdx.x, threadIdx.x);
         const uint32_t ty_g = IMAD(blockDim.y, blockIdx.y, threadIdx.y);
 
+        // If the thread indices are outside the image boundaries, do nothing.
+        if ((tx_g >= imgDim.x) || (ty_g >= imgDim.y)) {
+            return;
+        }
+
         extern __shared__ uint32_t smemArray[];
 
         CudaUtil::KernelIndex index = { tx_l, ty_l, tx_g, ty_g };
@@ -37,6 +42,7 @@ namespace ConvolveKernels
 
         CudaUtil::FillSmemFromSurface<uint32_t>(
             smemArray,
+            smemDim,
             inputSurface,
             imgDim,
             index,
@@ -53,22 +59,24 @@ namespace ConvolveKernels
         float bAccum = 0;
         float aAccum = 0;
 
-        for (int y = 0; y <= kernelDim.y; y++) {
-            for (int x = 0; y <= kernelDim.x; x++) {
+        for (int y = 0; y < kernelDim.y; y++) {
+            for (int x = 0; x < kernelDim.x; x++) {
                 RgbaData inputPixel;
                 inputPixel.u32Data = smemArray[MatId((tx_l + x), (ty_l + y), smemDim.x)];
                 rAccum += static_cast<float>(inputPixel.channels[0]) * kernel[MatId(x, y, kernelDim.x)];
                 gAccum += static_cast<float>(inputPixel.channels[1]) * kernel[MatId(x, y, kernelDim.x)];
                 bAccum += static_cast<float>(inputPixel.channels[2]) * kernel[MatId(x, y, kernelDim.x)];
-                aAccum += static_cast<float>(inputPixel.channels[3]) * kernel[MatId(x, y, kernelDim.x)];
             }
         }
 
+        RgbaData inputPixel;
+        inputPixel.u32Data = smemArray[MatId((tx_l + kernelRadius.x), (ty_l + kernelRadius.y), smemDim.x)];
+
         RgbaData outputPixel;
         outputPixel.channels[0] = static_cast<uint8_t>(min(255.0, rAccum));
-        outputPixel.channels[1] = static_cast<uint8_t>(min(255.0, rAccum));
-        outputPixel.channels[2] = static_cast<uint8_t>(min(255.0, rAccum));
-        outputPixel.channels[3] = static_cast<uint8_t>(min(255.0, rAccum));
+        outputPixel.channels[1] = static_cast<uint8_t>(min(255.0, gAccum));
+        outputPixel.channels[2] = static_cast<uint8_t>(min(255.0, bAccum));
+        outputPixel.channels[3] = inputPixel.channels[3];
 
         surf2Dwrite(outputPixel.u32Data, outputSurface, tx_g * sizeof(uint32_t), ty_g);
     }

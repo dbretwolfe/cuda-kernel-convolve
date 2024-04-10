@@ -11,9 +11,9 @@
 int main()
 {
     std::vector<float> gaussian3x3Kernel = {
-        1/16, 2/16, 1/16,
-        2/16, 4/16, 2/16, 
-        1/16, 2/16, 1/16
+        1.0/16.0, 2.0/16.0, 1.0/16.0,
+        2.0/16.0, 4.0/16.0, 2.0/16.0, 
+        1.0/16.0, 2.0/16.0, 1.0/16.0
     };
     CudaUtil::Dim2 kernelDim = { 3, 3 };
 
@@ -22,6 +22,7 @@ int main()
 
     CudaImgProc::CudaConvolver convolver(inputImage);
     auto outputImg = convolver.Convolve(gaussian3x3Kernel, kernelDim);
+    outputImg.Write("../../../images/output.png", StbImage::Image::ImageType::PNG, 100);
 
     return 0;
 }

@@ -28,7 +28,7 @@ namespace StbImage
     Image::Image(std::string filePath)
     {
         data = stbi_load(filePath.c_str(), &_width, &_height, &_channels, 0);
-        if (!data) {
+        if (data == nullptr) {
             throw std::runtime_error(stbi_failure_reason());
         }
 
@@ -48,7 +48,7 @@ namespace StbImage
         }
     }
 
-    void Image::Write(const std::string filePath, ImageType imageType, uint8_t quality = 100)
+    void Image::Write(const std::string filePath, ImageType imageType, uint8_t quality)
     {
         if (!data) {
             throw std::runtime_error("Image data is invalid, cannot write!");

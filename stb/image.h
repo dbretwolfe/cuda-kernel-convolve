@@ -15,7 +15,7 @@ namespace StbImage
         Image(const Image& image);
         ~Image();
 
-        void Write(const std::string filePath, ImageType imageType, uint8_t quality);
+        void Write(const std::string filePath, ImageType imageType, uint8_t quality = 100);
 
         uint32_t width() const { return static_cast<uint32_t>(_width); }
         uint32_t height() const { return static_cast<uint32_t>(_height); }

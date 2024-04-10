@@ -12,7 +12,7 @@ namespace CudaImgProc
     {
         cudaError cudaStatus = AllocCudaMem();
         if (cudaStatus != cudaSuccess) {
-            throw std::exception("Could not allocate memory for CUDA arrays!");
+            throw std::runtime_error("Could not allocate memory for CUDA arrays!");
         }
     }
 
@@ -23,13 +23,18 @@ namespace CudaImgProc
 
     StbImage::Image CudaConvolver::Convolve(std::vector<float>& kernel, CudaUtil::Dim2 kernelDim)
     {
+        // Allocate memory for the convolution kernel and copy the kernel to the device.
+        size_t kernelSize = (kernelDim.x * kernelDim.y * sizeof(float));
+        CUDA_CHECK(cudaMalloc((void**)&_devKernel, kernelSize));
+        CUDA_CHECK(cudaMemcpy(_devKernel, kernel.data(), kernelSize, cudaMemcpyHostToDevice));
+
         // Calculate the number of CUDA blocks needed.
 		const dim3 numBlocks(
             IntDivUp(_image->width(), blockSize.x), 
             IntDivUp(_image->height(), blockSize.y)
             );
 
-        const size_t arrayPitch = _image->width() * _image->channels();
+        const size_t arrayPitch = _image->width() * sizeof(uint32_t);
 
         // Copy the input image data to the device.
         CUDA_CHECK(cudaMemcpy2DToArray(
@@ -53,7 +58,7 @@ namespace CudaImgProc
             _devInputSurface,
             _devOutputSurface,
             imgDim,
-            kernel.data(),
+            _devKernel,
             kernelDim,
             smemDim
         );
@@ -82,7 +87,8 @@ namespace CudaImgProc
     {
         cudaError cudaStatus;
 
-        cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc(8, 8, 8, 8, cudaChannelFormatKindUnsigned);
+        // The CUDA arrays will be allocated with u32 elements, since the pixel data is 4 channel RGBA.
+        cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc<uint32_t>();
 
         // Allocate the CUDA arrays for input and output.
 		cudaStatus = cudaMallocArray(&_devInputArray,
